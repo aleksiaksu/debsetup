@@ -5,11 +5,11 @@
 - Small tweaks for polkit and .profile.
 - Preferences for apt. 
 
-# Automated script (WIP) 
-
 Requires clean Debian base installation with Standard System Utilities.
 
-https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.0.0-amd64-netinst.iso
+https://cdimage.debian.org/debian-cd/current/
+
+# Automated script (WIP) 
 
 After base Debian installation, you can run a script to use this setup:
 ```
@@ -18,10 +18,6 @@ sudo reboot
 ```
 
 # Manual installation (Based on notes.)
-
-Requires clean Debian base installation with Standard System Utilities.
-
-https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.0.0-amd64-netinst.iso
 
 Install `git`.
 ```

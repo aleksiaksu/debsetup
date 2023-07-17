@@ -2,7 +2,7 @@
 
 - Debian 12 or newer.
 - SDDM and lightweight XFCE4 desktop.
-- Small tweaks for polkit and.profile.
+- Small tweaks for polkit and .profile.
 - Preferences for apt. 
 
 # Automated script (WIP) 

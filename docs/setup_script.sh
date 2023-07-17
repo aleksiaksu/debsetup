@@ -23,7 +23,6 @@ echo "Cloning apt preferences from Github..."
 git clone https://github.com/aleksiaksu/aptprefs.git ~/aptprefs
 cd ~/aptprefs/debian
 
-
 # Copy preferences
 echo "Setting up apt preferences.."
 sudo cp *.pref /etc/apt/preferences.d

@@ -3,17 +3,31 @@
 echo "Welcome to setup. Script by github/aleksiaksu."
 echo "The script is licensed under MIT."
 echo "The script installs lightweight XFCE4 desktop with SDDM."
+echo "Optional software can be installed."
 echo "You need to set manually desktop settings, after installation."
 
-# Prompt for user confirmation
-read -p "Do you want to proceed? [Y/n]: " choice1
-choice1=${choice1,,}  # Convert the input to lowercase
+# Prompt for user confirmation to proceed
+read -p "Do you want to proceed? [Y/n]: " choiceSetup
+choiceSetup=${choiceSetup,,}  # Convert the input to lowercase
 
 # Prompt for user confirmation for Steam installation
-read -p "Do you want to install Steam? [Y/n]: " choice2
-choice2=${choice2,,}  # Convert the input to lowercase
+read -p "Do you want to install Steam? [Y/n]: " choiceSteam
+choiceSteam=${choiceSteam,,}  # Convert the input to lowercase
 
-if [[ $choice1 =~ ^(y|yes|)$ ]]; then
+# Prompt for user confirmation for Network Manager installation
+read -p "Do you want to install Network Manager? [Y/n]: " choiceNetworkManager
+choiceNetworkManager=${choiceNetworkManager,,}  # Convert the input to lowercase
+
+# Prompt for user confirmation for Wine installation
+read -p "Do you want to install Wine and run Win programs? [Y/n]: " choiceInsWine
+choiceInsWine=${choiceInsWine,,}  # Convert the input to lowercase
+
+if [[ $choiceSetup =~ ^(y|yes|)$ ]]; then
+
+# Enable I386 architecture
+echo "Enabling i386 architecture"
+sudo dpkg --add-architecture i386 
+
 # Install git
 echo "Installing git..."
 sudo DEBIAN_FRONTEND=noninteractive apt -yq install git
@@ -37,7 +51,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt -yq install sddm --no-install-recommends
 
 # Install required packages
 echo "Installing required packages..."
-sudo DEBIAN_FRONTEND=noninteractive  apt -yq install pulseaudio xfce4-session xfce4-panel xfce4-pulseaudio-plugin \
+sudo DEBIAN_FRONTEND=noninteractive apt -yq install pulseaudio xfce4-session xfce4-panel xfce4-pulseaudio-plugin \
 xfce4-power-manager xfce4-power-manager-data xfce4-power-manager-plugins \
 policykit-1 policykit-1-gnome polkitd pkexec policycoreutils
 
@@ -75,30 +89,72 @@ if [ -d "/usr/sbin" ] ; then
     PATH="/usr/sbin:$PATH"
 fi
 EOF'
-    
-    if [[ $choice2 =~ ^(y|yes|)$ ]]; then
-    # Configure Steam repository
-    echo "Configuring Steam repository..."
-    sudo sh -c "tee /etc/apt/sources.list.d/steam-stable.list <<'EOF'
-    deb [arch=amd64,i386 signed-by=/usr/share/keyrings/steam.gpg] https://repo.steampowered.com/steam/ stable steam
-    deb-src [arch=amd64,i386 signed-by=/usr/share/keyrings/steam.gpg] https://repo.steampowered.com/steam/ stable steam
-    EOF"
-    
-    # Download and import Steam repository keyring
-    echo "Downloading Steam repository key..."
-    sudo wget -O /usr/share/keyrings/steam.gpg https://repo.steampowered.com/steam/archive/stable/steam.gpg
-    sudo dpkg --add-architecture i386
-    sudo apt-get update
-    
-    # Install Steam launcher with recommended packages
-    echo "Installing Steam with recommended packages..."
-    sudo DEBIAN_FRONTEND=noninteractive apt -yq install steam-launcher --install-recommends
-    else
-        echo "Steam installation cancelled."
-    fi
 
-echo "Please restart your computer. Run command: sudo reboot"
+# Optional software START  
+
+# Steam
+if [[ $choiceSteam =~ ^(y|yes|)$ ]]; then
+# Configure Steam repository
+echo "Configuring Steam repository..."
+sudo sh -c "tee /etc/apt/sources.list.d/steam-stable.list <<'EOF'
+deb [arch=amd64,i386 signed-by=/usr/share/keyrings/steam.gpg] https://repo.steampowered.com/steam/ stable steam
+deb-src [arch=amd64,i386 signed-by=/usr/share/keyrings/steam.gpg] https://repo.steampowered.com/steam/ stable steam
+EOF"
+
+# Download and import Steam repository keyring
+echo "Importing Steam repository key..."
+sudo wget -O /usr/share/keyrings/steam.gpg https://repo.steampowered.com/steam/archive/stable/steam.gpg
+sudo dpkg --add-architecture i386
+sudo apt-get update
+
+# Install Steam launcher with recommended packages
+echo "Installing Steam with recommended packages..."
+sudo DEBIAN_FRONTEND=noninteractive apt -yq install steam-launcher --install-recommends
+else
+echo "Steam installation cancelled."
+fi
+
+# Network Manager
+if [[ $choiceNetworkManager =~ ^(y|yes|)$ ]]; then
+echo "Installing Network Manager..."
+sudo DEBIAN_FRONTEND=noninteractive apt -yq install install network-manager
+sudo systemctl NetworkManager stop
+echo "Removing lines from /etc/network/interfaces..."
+sudo sed -i '10,$ d' /etc/network/interfaces
+echo "Setting network to managed..."
+sudo sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
+sudo systemctl NetworkManager start
+else
+echo "Network Manager installation cancelled."
+fi
+
+# Wine
+if [[ $choiceInsWine =~ ^(y|yes|)$ ]]; then
+echo "Importing winehq repository key..."
+sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+echo "Adding winehq repository"
+sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
+echo "Installing Wine with recommended packages..."
+sudo DEBIAN_FRONTEND=noninteractive apt -yq install winehq-stable
+echo "Installing winetricks..."
+sudo DEBIAN_FRONTEND=noninteractive apt -yq install zenity
+sudo bash -c 'wget -O /usr/local/bin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks && chmod +x /usr/local/bin/winetricks'
+else
+echo "Wine installation cancelled."
+fi
+
+# Optional software END
+
+echo "Setup result:"
+if [[ $choiceNetworkManager =~ ^(y|yes|)$ ]]; then
+echo "You can manage your network configuration, by running the commands: nmtui for GUI or nmcli for text only."
+fi
+if [[ $choiceInsWine =~ ^(y|yes|)$ ]]; then
+echo "You can run certain Win programs. You can tweak Wine, by running the command: winetricks."
+fi
+
+echo "Please restart your computer. Please run: sudo reboot"
 
 else
-    echo "Installation cancelled."
+echo "Installation cancelled."
 fi

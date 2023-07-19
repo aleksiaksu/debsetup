@@ -117,7 +117,7 @@ fi
 # Network Manager
 if [[ $choiceNetworkManager =~ ^(y|yes|)$ ]]; then
 echo "Installing Network Manager..."
-sudo DEBIAN_FRONTEND=noninteractive apt -yq install install network-manager network-manager-config-connectivity-debian
+sudo DEBIAN_FRONTEND=noninteractive apt -yq install network-manager network-manager-config-connectivity-debian
 sudo systemctl stop NetworkManager
 echo "Removing lines from /etc/network/interfaces..."
 sudo sed -i '10,$ d' /etc/network/interfaces

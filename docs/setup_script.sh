@@ -117,13 +117,13 @@ fi
 # Network Manager
 if [[ $choiceNetworkManager =~ ^(y|yes|)$ ]]; then
 echo "Installing Network Manager..."
-sudo DEBIAN_FRONTEND=noninteractive apt -yq install install network-manager
-sudo systemctl NetworkManager stop
+sudo DEBIAN_FRONTEND=noninteractive apt -yq install install network-manager network-manager-config-connectivity-debian
+sudo systemctl stop NetworkManager
 echo "Removing lines from /etc/network/interfaces..."
 sudo sed -i '10,$ d' /etc/network/interfaces
 echo "Setting network to managed..."
 sudo sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
-sudo systemctl NetworkManager start
+sudo systemctl start NetworkManager
 else
 echo "Network Manager installation cancelled."
 fi

@@ -86,12 +86,6 @@ echo "Setting up Firefox as the default browser..."
 sudo update-alternatives --install /usr/bin/x-web-browser x-web-browser \
 /var/lib/flatpak/exports/bin/org.mozilla.firefox 201
 
-else
-echo "Desktop installation cancelled."
-fi
-
-# Desktop installation END
-
 # Clone deb-setup repository
 git clone https://github.com/aleksiaksu/debsetup.git ~/debsetup
 cd ~/debsetup
@@ -99,6 +93,12 @@ cd ~/debsetup
 # Copy polkit configuration 
 echo "Setting up polkit admin privileges for sudo group..."
 sudo cp *.conf /etc/polkit-1/localauthority.conf.d
+
+else
+echo "Desktop installation cancelled."
+fi
+
+# Desktop installation END
 
 # Append PATH configuration to ~/.profile
 echo "Adding small tweak to PATH..."

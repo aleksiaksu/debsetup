@@ -10,6 +10,10 @@ echo "You need to set manually desktop settings, after installation."
 read -p "Do you want to proceed? [Y/n]: " choiceSetup
 choiceSetup=${choiceSetup,,}  # Convert the input to lowercase
 
+# Prompt for user confirmation for Desktop installation
+read -p "Do you want to install Desktop? [Y/n]: " choiceDesktop
+choiceDesktop=${choiceDesktop,,}  # Convert the input to lowercase
+
 # Prompt for user confirmation for Steam installation
 read -p "Do you want to install Steam? [Y/n]: " choiceSteam
 choiceSteam=${choiceSteam,,}  # Convert the input to lowercase
@@ -21,6 +25,10 @@ choiceNetworkManager=${choiceNetworkManager,,}  # Convert the input to lowercase
 # Prompt for user confirmation for Wine installation
 read -p "Do you want to install Wine and run Win programs? [Y/n]: " choiceInsWine
 choiceInsWine=${choiceInsWine,,}  # Convert the input to lowercase
+
+# Prompt for user confirmation for Terminal Extras installation
+read -p "Do you want to install Terminal Extras? [Y/n]: "  choiceInsTermExtras
+ choiceInsTermExtras=${ choiceInsTermExtras,,}  # Convert the input to lowercase
 
 if [[ $choiceSetup =~ ^(y|yes|)$ ]]; then
 
@@ -44,6 +52,11 @@ sudo cp *.pref /etc/apt/preferences.d
 # Update apt repositories
 echo "Running apt update..."
 sudo apt update
+
+# Desktop installation START  
+
+# Desktop
+if [[ $choiceDesktop =~ ^(y|yes|)$ ]]; then
 
 # Install sddm without recommended packages
 echo "Installing sddm without recommended packages..."
@@ -72,6 +85,12 @@ sudo flatpak install -y --noninteractive flathub org.mozilla.firefox
 echo "Setting up Firefox as the default browser..."
 sudo update-alternatives --install /usr/bin/x-web-browser x-web-browser \
 /var/lib/flatpak/exports/bin/org.mozilla.firefox 201
+
+else
+echo "Desktop installation cancelled."
+fi
+
+# Desktop installation END
 
 # Clone deb-setup repository
 git clone https://github.com/aleksiaksu/debsetup.git ~/debsetup
@@ -134,6 +153,7 @@ echo "Importing winehq repository key..."
 sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
 echo "Adding winehq repository"
 sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
+sudo apt-get update
 echo "Installing Wine with recommended packages..."
 sudo DEBIAN_FRONTEND=noninteractive apt -yq install winehq-stable
 echo "Installing winetricks..."
@@ -141,6 +161,14 @@ sudo DEBIAN_FRONTEND=noninteractive apt -yq install zenity
 sudo bash -c 'wget -O /usr/local/bin/winetricks https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks && chmod +x /usr/local/bin/winetricks'
 else
 echo "Wine installation cancelled."
+fi
+
+#  Terminal Extras 
+if [[ $choiceInsTermExtras =~ ^(y|yes|)$ ]]; then
+echo "Installing Terminal Extras..."
+sudo DEBIAN_FRONTEND=noninteractive apt -yq install htop lshw neofetch
+else
+echo "Terminal Extras installation cancelled."
 fi
 
 # Optional software END

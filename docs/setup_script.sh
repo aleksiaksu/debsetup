@@ -28,7 +28,7 @@ choiceInsWine=${choiceInsWine,,}  # Convert the input to lowercase
 
 # Prompt for user confirmation for Terminal Extras installation
 read -p "Do you want to install Terminal Extras? [Y/n]: "  choiceInsTermExtras
- choiceInsTermExtras=${ choiceInsTermExtras,,}  # Convert the input to lowercase
+ choiceInsTermExtras=${choiceInsTermExtras,,}  # Convert the input to lowercase
 
 if [[ $choiceSetup =~ ^(y|yes|)$ ]]; then
 

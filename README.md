@@ -13,8 +13,7 @@ https://cdimage.debian.org/debian-cd/current/
 
 After base Debian installation, you can run a script to use this setup:
 ```
-wget -qO- https://aleksiaksu.github.io/debsetup/setup_script.sh | bash 
-sudo reboot
+wget -qO- https://aleksiaksu.github.io/debsetup/setup_script.sh | bash
 ```
 
 # Manual installation (Based on notes.)

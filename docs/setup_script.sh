@@ -10,6 +10,8 @@ echo "You need to set manually desktop settings, after installation."
 read -p "Do you want to proceed? [Y/n]: " choiceSetup
 choiceSetup=${choiceSetup,,}  # Convert the input to lowercase
 
+if [[ $choiceSetup =~ ^(y|yes|)$ ]]; then
+
 # Prompt for user confirmation for Desktop installation
 read -p "Do you want to install Desktop? [Y/n]: " choiceDesktop
 choiceDesktop=${choiceDesktop,,}  # Convert the input to lowercase
@@ -29,8 +31,6 @@ choiceInsWine=${choiceInsWine,,}  # Convert the input to lowercase
 # Prompt for user confirmation for Terminal Extras installation
 read -p "Do you want to install Terminal Extras? [Y/n]: "  choiceInsTermExtras
  choiceInsTermExtras=${choiceInsTermExtras,,}  # Convert the input to lowercase
-
-if [[ $choiceSetup =~ ^(y|yes|)$ ]]; then
 
 # Enable I386 architecture
 echo "Enabling i386 architecture"

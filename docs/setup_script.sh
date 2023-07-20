@@ -185,20 +185,6 @@ else
 echo "Steam installation cancelled."
 fi
 
-# Network Manager
-if [[ $choiceNetworkManager =~ ^(y|yes|)$ ]]; then
-echo "Installing Network Manager..."
-sudo DEBIAN_FRONTEND=noninteractive apt -yq install network-manager network-manager-config-connectivity-debian
-sudo systemctl stop NetworkManager
-echo "Removing lines from /etc/network/interfaces..."
-sudo sed -i '10,$ d' /etc/network/interfaces
-echo "Setting network to managed..."
-sudo sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
-sudo systemctl start NetworkManager
-else
-echo "Network Manager installation cancelled."
-fi
-
 # Wine
 if [[ $choiceInsWine =~ ^(y|yes|)$ ]]; then
 echo "Importing winehq repository key..."
@@ -223,11 +209,25 @@ else
 echo "Terminal Extras installation cancelled."
 fi
 
+# Network Manager
+if [[ $choiceNetworkManager =~ ^(y|yes|)$ ]]; then
+echo "Installing Network Manager..."
+sudo DEBIAN_FRONTEND=noninteractive apt -yq install network-manager network-manager-config-connectivity-debian
+sudo systemctl stop NetworkManager
+echo "Removing lines from /etc/network/interfaces..."
+sudo sed -i '10,$ d' /etc/network/interfaces
+echo "Setting network to managed..."
+sudo sed -i 's/managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
+sudo systemctl start NetworkManager
+else
+echo "Network Manager installation cancelled."
+fi
+
 # Optional software END
 
 echo "Setup result:"
 if [[ $choiceNetworkManager =~ ^(y|yes|)$ ]]; then
-echo "You can manage your network configuration, by running the commands: nmtui for GUI or nmcli for text only."
+echo "You can manage your network configuration, by running the commands: nmtui for user interface or nmcli for text only."
 fi
 if [[ $choiceInsWine =~ ^(y|yes|)$ ]]; then
 echo "You can run certain Win programs. You can tweak Wine, by running the command: winetricks."

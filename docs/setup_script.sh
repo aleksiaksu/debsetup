@@ -1,20 +1,42 @@
 #!/bin/bash
 
+echo ""
+echo ""
+echo "▄▀█ █░░ █▀▀ █▄▀ █▀ █ ▀ █▀   █▀ █▀▀ ▀█▀ █░█ █▀█"
+echo "█▀█ █▄▄ ██▄ █░█ ▄█ █ ░ ▄█   ▄█ ██▄ ░█░ █▄█ █▀▀"
+echo ""
+echo ""
 echo "Welcome to setup. Script by github/aleksiaksu."
 echo "The script is licensed under MIT."
 echo "The script installs lightweight XFCE4 desktop with SDDM."
-echo "Optional software can be installed."
-echo "You need to set manually desktop settings, after installation."
-
+echo "If you are making quick install or installing manually desktop. You'll need to set manually few desktop settings, after installation."
+echo ""
+echo ""
 # Prompt for user confirmation to proceed
 read -p "Do you want to proceed? [Y/n]: " choiceSetup
 choiceSetup=${choiceSetup,,}  # Convert the input to lowercase
 
 if [[ $choiceSetup =~ ^(y|yes|)$ ]]; then
 
+# Prompt for user confirmation to quick install
+echo "Quick setup will install anything, including desktop and optional software."
+echo "Manual setup have certain choices, it makes included software and some features more optional."
+read -p "Do you want to make quick or manual setup? [q/m]: " choiceQuickSetup
+choiceQuickSetup=${choiceQuickSetup,,}  # Convert the input to lowercase
+
+if [[ $choiceQuickSetup =~ ^(m|manual|)$ ]]; then
+
+# Prompt for user confirmation for Desktop installation
+read -p "Do you want to install customized apt preferences? [Y/n]: " choiceAptPreferences
+choiceAptPreferences=${choiceAptPreferences,,}  # Convert the input to lowercase
+
 # Prompt for user confirmation for Desktop installation
 read -p "Do you want to install Desktop? [Y/n]: " choiceDesktop
 choiceDesktop=${choiceDesktop,,}  # Convert the input to lowercase
+
+# Prompt for user confirmation for PATH Tweak
+read -p "Do you want to install PATH Tweak? [Y/n]: " choicePathTweak
+choicePathTweak=${choicePathTweak,,}  # Convert the input to lowercase
 
 # Prompt for user confirmation for Steam installation
 read -p "Do you want to install Steam? [Y/n]: " choiceSteam
@@ -30,15 +52,34 @@ choiceInsWine=${choiceInsWine,,}  # Convert the input to lowercase
 
 # Prompt for user confirmation for Terminal Extras installation
 read -p "Do you want to install Terminal Extras? [Y/n]: "  choiceInsTermExtras
- choiceInsTermExtras=${choiceInsTermExtras,,}  # Convert the input to lowercase
+choiceInsTermExtras=${choiceInsTermExtras,,}  # Convert the input to lowercase
+
+else
+echo "Running quick setup..."
+choiceAptPreferences=y
+choiceDesktop=y
+choicePathTweak=y
+choiceSteam=y
+choiceNetworkManager=y
+choiceInsWine=y
+choiceInsTermExtras=y
+fi
 
 # Enable I386 architecture
 echo "Enabling i386 architecture"
 sudo dpkg --add-architecture i386 
 
+# Update apt repositories
+echo "Running apt update..."
+sudo apt update
+
 # Install git
 echo "Installing git..."
 sudo DEBIAN_FRONTEND=noninteractive apt -yq install git
+
+# Apt Preferences
+
+if [[ $choiceDesktop =~ ^(y|yes|)$ ]]; then
 
 # Clone debprefs repository
 echo "Cloning apt preferences from Github..."
@@ -52,6 +93,10 @@ sudo cp *.pref /etc/apt/preferences.d
 # Update apt repositories
 echo "Running apt update..."
 sudo apt update
+
+else
+echo "Apt Preferences installation cancelled."
+fi
 
 # Desktop installation START  
 
@@ -100,6 +145,9 @@ fi
 
 # Desktop installation END
 
+# PATH Tweak
+if [[ $choicePathTweak =~ ^(y|yes|)$ ]]; then
+
 # Append PATH configuration to ~/.profile
 echo "Adding small tweak to PATH..."
 sh -c 'cat <<EOF >> ~/.profile
@@ -108,6 +156,10 @@ if [ -d "/usr/sbin" ] ; then
     PATH="/usr/sbin:$PATH"
 fi
 EOF'
+
+else
+echo "PATH Tweak installation cancelled."
+fi
 
 # Optional software START  
 
